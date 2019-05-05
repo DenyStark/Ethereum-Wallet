@@ -1,11 +1,10 @@
-'use strict'
+const express = require('express');
 
-const express = require('express')
-const wallet = require('../controllers/wallet')
+const wallet = require('../controllers/wallet');
 const etherscan = require('../controllers/etherscan');
-const checkToken = require('../middleware/check-token')
-const { checkWallet } = require('../middleware/bitcoin')
-const router = express.Router()
+const checkToken = require('../middleware/check-token');
+
+const router = express.Router();
 
 router.route('/getBalance')
   .get(checkToken, wallet.getBalance);
@@ -17,7 +16,6 @@ router.route('/createAddress')
   .get(checkToken, wallet.createAddress);
 
 router.route('/sendTransaction')
-    .get(checkToken, checkWallet, wallet.sendTransaction)
+  .get(checkToken, wallet.sendTransaction);
 
-
-module.exports = router
+module.exports = router;
