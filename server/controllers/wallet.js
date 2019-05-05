@@ -1,7 +1,10 @@
 const validate = require('bitcoin-address-validation');
+
+const db = require('../../db');
 const logger = require('../../logger');
 const { btcQuery } = require('../middleware/bitcoin');
 const { getBtcErrorCode } = require('../utils/bitcoin');
+const tools = require('../utils/web3');
 
 /**
  * Get balance for the user.
@@ -58,23 +61,24 @@ const getTransactions = (req, res) => {
  * Create address for the user.
  */
 const createAddress = (req, res) => {
-  btcQuery({
-    method: 'getnewaddress',
-    walletName: req.locals.UserId.toString()
-  })
-    .then(address => {
-      res.send({
-        status: 'success',
-        address
-      });
-    }, err => {
-      if (err instanceof Error) err = err.message;
-      logger.error(err);
-      res.status(500).send({
-        status: 'error',
-        message: 'Internal server error.'
-      });
-    });
+  const newAccount = tools.generateNewAccount();
+  const userId = req.locals.userId;
+  const { address, privateKey } = newAccount;
+
+  if (!userId) return res.status(401).send({
+    status: 'error',
+    message: 'Not authorized.'
+  });
+
+  db.one(`
+    INSERT INTO "Wallets" ("UserId", "MnemonicId", "Address", "PrivateKey")
+    VALUES ($1, $2, $3, $4) RETURNING "WalletId"`,
+  [userId, 0, address, privateKey]);
+
+  res.send({
+    status: 'success',
+    address
+  });
 };
 
 /**

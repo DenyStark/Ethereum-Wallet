@@ -13,7 +13,7 @@ router.route('/getTransactions')
     .get(checkToken, checkWallet, wallet.getTransactions)
 
 router.route('/createAddress')
-    .get(checkToken, checkWallet, wallet.createAddress)
+  .get(checkToken, wallet.createAddress);
 
 router.route('/sendTransaction')
     .get(checkToken, checkWallet, wallet.sendTransaction)
