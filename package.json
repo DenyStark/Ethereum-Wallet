@@ -37,6 +37,7 @@
     "pg-promise": "^8.6.4",
     "pm2": "^3.5.0",
     "request": "^2.88.0",
+    "web3": "^1.0.0-beta.54",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.8.0"
   }
