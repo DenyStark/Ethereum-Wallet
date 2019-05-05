@@ -53,43 +53,36 @@ const register = (req, res) => {
 };
 
 const login = (req, res) => {
-  if (!req.body.username)
-    return res.status(400).send({
+  const { username, password } = req.body;
+
+  if (!username || !password)
+    return res.status(422).send({
       status: 'error',
-      message: 'Username is not provided.'
-    });
-  if (!req.body.password)
-    return res.status(400).send({
-      status: 'error',
-      message: 'Password is not provided.'
+      message: 'Username or password is not provided.'
     });
 
-  const username = req.body.username;
-
-  db.any('select * from "Users" where "Username" = $1',
-    [username])
+  db.any('SELECT * FROM "Users" WHERE "Username" = $1', [username])
     .then(rows => {
-      const row = rows[0];
-      if (!row)
-        return res.status(400).send({
+      if (!rows[0])
+        return res.status(422).send({
           status: 'error',
-          message:
-                        'No user with such username & password combination.'
+          message: 'No user with such username & password combination.'
         });
 
-      bcrypt.compare(req.body.password, row.Password)
-        .then((areMatch) => {
+      const { Password: passHash, UserId: userId } = rows[0];
+
+      bcrypt.compare(password, passHash)
+        .then(areMatch => {
           if (!areMatch)
-            return res.status(400).send({
+            return res.status(401).send({
               status: 'error',
-              message: 'No user with such username \
-                                & password combination.'
+              message: 'No user with such username & password combination.'
             });
-          // Create a token
+
           const token = jwt.sign(
-            { UserId: row.UserId },
+            { UserId: userId },
             config.jwtSecret,
-            { expiresIn: '24h' } // expires in 24 hours
+            { expiresIn: '24h' }
           );
           res.send({ status: 'success', token });
         });
