@@ -4,6 +4,9 @@ module.exports = {
   infura: {
     provider: process.env.DEV_PROVIDER,
   },
+  etherscan: {
+    key: process.env.DEV_ETHERSCAN_KEY,
+  },
   db: {
     user: process.env.DEV_PGUSER,
     host: process.env.DEV_PGHOST,
