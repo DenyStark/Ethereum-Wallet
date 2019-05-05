@@ -1,6 +1,7 @@
 const db = require('../../db');
 const logger = require('../../logger');
 const ethereum = require('../middleware/ethereum');
+const etherscan = require('../middleware/etherscan');
 const tools = require('../utils/web3');
 
 /**
@@ -31,6 +32,42 @@ const getBalance = (req, res) => {
           res.status(500).send({
             status: 'error',
             message: 'Internal server error.'
+          });
+        });
+    }, err => {
+      logger.error(err);
+      res.status(500).send({
+        status: 'error',
+        message: 'Error with the database.'
+      });
+    });
+};
+
+const getTransactions = (req, res) => {
+  const userId = req.locals.userId;
+
+  db.any('SELECT * FROM "Wallets" WHERE "UserId" = $1', [userId])
+    .then(rows => {
+      if (!rows[0])
+        return res.status(422).send({
+          status: 'error',
+          message: 'No user with such username & password combination.'
+        });
+
+      const { Address: address } = rows[0];
+
+      etherscan.getTransactions(address)
+        .then(({ txs }) => {
+          res.send({
+            status: 'success',
+            address,
+            txs
+          });
+        }, err => {
+          logger.error(err);
+          res.status(500).send({
+            status: 'error',
+            message: `Problem with getting transactions for '${address}'`
           });
         });
     }, err => {
@@ -130,6 +167,7 @@ const sendTransaction = (req, res) => {
 
 module.exports = {
   getBalance,
+  getTransactions,
   createAddress,
   sendTransaction,
 };

@@ -1,7 +1,6 @@
 const express = require('express');
 
 const wallet = require('../controllers/wallet');
-const etherscan = require('../controllers/etherscan');
 const checkToken = require('../middleware/check-token');
 
 const router = new express.Router();
@@ -10,7 +9,7 @@ router.route('/getBalance')
   .get(checkToken, wallet.getBalance);
 
 router.route('/getTransactions')
-  .get(checkToken, etherscan.getTransactions);
+  .get(checkToken, wallet.getTransactions);
 
 router.route('/createAddress')
   .get(checkToken, wallet.createAddress);

@@ -1,14 +1,13 @@
 const request = require('request');
 
 const config = require('../../config');
-const logger = require('../../logger');
 
-const getRates = address => new Promise((resolve, reject) => {
+const getTransactions = (address) => new Promise((resolve, reject) => {
   const { apikey, endpoint: url } = config.etherscan;
 
   const qs = {
     module: 'account',
-    action: 'txlistinternal',
+    action: 'txlist',
     address,
     startblock: 0,
     sort: 'desc',
@@ -27,25 +26,6 @@ const getRates = address => new Promise((resolve, reject) => {
     resolve({ txs: result });
   });
 });
-
-const getTransactions = (req, res) => {
-  const { address } = req.body;
-
-  getRates(address)
-    .then(({ txs }) => {
-      res.send({
-        status: 'success',
-        address,
-        txs
-      });
-    }, err => {
-      logger.error(err);
-      res.status(500).send({
-        status: 'error',
-        message: `Problem with getting transactions for '${address}'`
-      });
-    });
-};
 
 module.exports = {
   getTransactions,
