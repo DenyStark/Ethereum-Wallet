@@ -1,11 +1,9 @@
-'use strict'
+const express = require('express');
+const { ethUsd } = require('../controllers/rates');
+const checkToken = require('../middleware/check-token');
+const router = new express.Router();
 
-const express = require('express')
-const { btcUsd } = require('../controllers/rates')
-const checkToken = require('../middleware/check-token')
-const router = express.Router()
+router.route('/ethUsd')
+  .get(checkToken, ethUsd);
 
-router.route('/btcusd')
-    .get(checkToken, btcUsd)
-
-module.exports = router
+module.exports = router;
