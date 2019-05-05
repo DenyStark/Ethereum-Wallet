@@ -1,7 +1,7 @@
 {
   "name": "crytpo-wallet",
-  "version": "1.0.0",
-  "description": "Bitcoin crypto wallet API",
+  "version": "0.1.0",
+  "description": "Ethereum crypto wallet API",
   "main": "server.js",
   "scripts": {
     "test": "node_modules/mocha/bin/mocha --recursive",
@@ -9,13 +9,13 @@
     "lint": "node_modules/eslint/bin/eslint.js ."
   },
   "keywords": [
-    "bitcoin",
+    "ethereum",
     "api",
-    "bitcoin-wallet",
+    "ethereum-wallet",
     "crypto-wallet"
   ],
-  "author": "Misha Kushka",
-  "homepage": "https://github.com/kushkamisha/bitcoin-wallet",
+  "author": "DenyStark <denyskrolevetskyi@gmail.com>",
+  "homepage": "https://github.com/DenyStark/ethereum-wallet",
   "license": "ISC",
   "devDependencies": {
     "chai": "^4.2.0",
@@ -23,6 +23,7 @@
     "swagger-ui-express": "^4.0.2"
   },
   "dependencies": {
+    "babel-eslint": "^10.0.1",
     "bcryptjs": "^2.4.3",
     "bip39": "^2.5.0",
     "bitcoin-address-validation": "^0.2.7",
