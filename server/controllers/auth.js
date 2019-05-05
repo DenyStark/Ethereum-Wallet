@@ -33,9 +33,9 @@ const register = (req, res) => {
       [username, hashedPassword]
       );
     })
-    .then(({ UserId }) => {
+    .then(({ UserId: userId }) => {
       // Create a token
-      const token = jwt.sign({ UserId }, config.jwtSecret, {
+      const token = jwt.sign({ userId }, config.jwtSecret, {
         expiresIn: '24h', // expires in 24 hours
       });
 
@@ -80,7 +80,7 @@ const login = (req, res) => {
             });
 
           const token = jwt.sign(
-            { UserId: userId },
+            { userId },
             config.jwtSecret,
             { expiresIn: '24h' }
           );

@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
     });
 
     req.locals = {};
-    req.locals.UserId = decoded.UserId;
+    req.locals.userId = decoded.userId;
     req.locals.token = { iat: decoded.iat, exp: decoded.exp };
     next();
   });
