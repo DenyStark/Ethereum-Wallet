@@ -47,37 +47,6 @@ const getBalance = (req, res) => {
 };
 
 /**
- * Get all in/out transactions of the user's wallet
- */
-const getTransactions = (req, res) => {
-  btcQuery({
-    method: 'listtransactions',
-    walletName: req.locals.UserId.toString()
-  })
-    .then(txs => {
-      res.send({
-        status: 'success',
-        txs: txs.map(tx => ({
-          txid: tx.txid,
-          address: tx.address,
-          category: tx.category,
-          amount: tx.category === 'send' ? -tx.amount : tx.amount,
-          confirmations: tx.confirmations,
-          time: tx.time,
-          ...(tx.comment !== undefined && { comment: tx.comment })
-        }))
-      });
-    }, err => {
-      if (err instanceof Error) err = err.message;
-      logger.error(err);
-      res.status(500).send({
-        status: 'error',
-        message: 'Can\'t get transactions list.'
-      });
-    });
-};
-
-/**
  * Create address for the user.
  */
 const createAddress = (req, res) => {
@@ -165,7 +134,6 @@ const sendTransaction = (req, res) => {
 
 module.exports = {
   getBalance,
-  getTransactions,
   createAddress,
   sendTransaction,
 };

@@ -4,7 +4,7 @@ const wallet = require('../controllers/wallet');
 const etherscan = require('../controllers/etherscan');
 const checkToken = require('../middleware/check-token');
 
-const router = express.Router();
+const router = new express.Router();
 
 router.route('/getBalance')
   .get(checkToken, wallet.getBalance);
