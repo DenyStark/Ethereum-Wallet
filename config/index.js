@@ -1,8 +1,6 @@
-'use strict'
+require('dotenv').config();
 
-require('dotenv').config()
+const env = process.env.NODE_ENV || 'development';
+const config = require(`./${env}`);
 
-const env = process.env.NODE_ENV || 'development'
-const config = require(`./${env}`)
-
-module.exports = config
+module.exports = config;
