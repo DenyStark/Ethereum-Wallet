@@ -4,24 +4,44 @@ const db = require('../../db');
 const logger = require('../../logger');
 const { btcQuery } = require('../middleware/bitcoin');
 const { getBtcErrorCode } = require('../utils/bitcoin');
+const ethereum = require('../middleware/ethereum');
 const tools = require('../utils/web3');
 
 /**
  * Get balance for the user.
  */
 const getBalance = (req, res) => {
-  btcQuery({ method: 'getbalance', walletName: req.locals.UserId.toString() })
-    .then(balance => {
-      res.send({
-        status: 'success',
-        balance // in BTC
-      });
+  const userId = req.locals.userId;
+
+  db.any('SELECT * FROM "Wallets" WHERE "UserId" = $1', [userId])
+    .then(rows => {
+      if (!rows[0])
+        return res.status(422).send({
+          status: 'error',
+          message: 'No user with such username & password combination.'
+        });
+
+      const { Address: address } = rows[0];
+
+      ethereum.getBalance(address)
+        .then(balance => {
+          res.send({
+            status: 'success',
+            balance // In wei
+          });
+        }, err => {
+          if (err instanceof Error) err = err.message;
+          logger.error(err);
+          res.status(500).send({
+            status: 'error',
+            message: 'Internal server error.'
+          });
+        });
     }, err => {
-      if (err instanceof Error) err = err.message;
       logger.error(err);
       res.status(500).send({
         status: 'error',
-        message: 'Internal server error.'
+        message: 'Error with the database.'
       });
     });
 };

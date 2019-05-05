@@ -7,7 +7,7 @@ const { checkWallet } = require('../middleware/bitcoin')
 const router = express.Router()
 
 router.route('/getBalance')
-    .get(checkToken, checkWallet, wallet.getBalance)
+  .get(checkToken, wallet.getBalance);
 
 router.route('/getTransactions')
     .get(checkToken, checkWallet, wallet.getTransactions)
