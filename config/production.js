@@ -5,7 +5,7 @@ module.exports = {
     provider: process.env.DEV_PROVIDER,
   },
   etherscan: {
-    key: process.env.ETHERSCAN_KEY,
+    apikey: process.env.ETHERSCAN_KEY,
     endpoint: process.env.ETHERSCAN_ENDPOINT,
   },
   db: {
