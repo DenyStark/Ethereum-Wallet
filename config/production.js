@@ -6,6 +6,7 @@ module.exports = {
   },
   etherscan: {
     key: process.env.ETHERSCAN_KEY,
+    endpoint: process.env.ETHERSCAN_ENDPOINT,
   },
   db: {
     user: process.env.PGUSER,
