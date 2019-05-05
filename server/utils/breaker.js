@@ -1,13 +1,11 @@
-'use strict'
-
 /**
  * Custom error class to exit from promise chains
  */
 class Breaker extends Error {
-    constructor(...args) {
-        super(...args)
-        this.name = 'Breaker'
-    }
+  constructor(...args) {
+    super(...args);
+    this.name = 'Breaker';
+  }
 }
 
-module.exports = Breaker
+module.exports = Breaker;
