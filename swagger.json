@@ -101,7 +101,7 @@
                 "summary": "Get your Bitcoin transactions"
             }
         },
-        "/rates/btcusd": {
+        "/rates/ethusd": {
             "parameters": [
                 {
                     "name": "x-access-token",
