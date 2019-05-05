@@ -1,9 +1,5 @@
-const validate = require('bitcoin-address-validation');
-
 const db = require('../../db');
 const logger = require('../../logger');
-const { btcQuery } = require('../middleware/bitcoin');
-const { getBtcErrorCode } = require('../utils/bitcoin');
 const ethereum = require('../middleware/ethereum');
 const tools = require('../utils/web3');
 
@@ -71,62 +67,62 @@ const createAddress = (req, res) => {
 };
 
 /**
- * Send bitcoins from the user wallet to another user.
+ * Send ethers from the user wallet to another user.
  */
 const sendTransaction = (req, res) => {
-  let amount = req.headers.amount;
-  const address = req.headers.address;
-  const comment = req.headers.comment; // optional
-  const fee = 0.003; // hardcoded fee for TESTNET ONLY!!!
+  const { amount, address } = req.headers;
+  const value = parseFloat(amount);
+  const userId = req.locals.userId;
 
-  if (!amount) return res.status(400).send({
-    status: 'error', message: 'No amount provided.'
-  });
-  if (!address) return res.status(400).send({
-    status: 'error', message: 'No address provided.'
+  if (!userId) return res.status(401).send({
+    status: 'error',
+    message: 'Not authorized.'
   });
 
-  amount = parseFloat(amount);
-  if (isNaN(amount)) return res.status(400).send({
-    status: 'error', message: 'Amount should be a number.'
+  if (!amount || !address) return res.status(422).send({
+    status: 'error',
+    message: 'No amount or address provided.'
   });
 
-  if (!validate(address)) return res.status(400).send({
-    status: 'error', message: 'Invalid address.'
+  if (isNaN(value)) return res.status(422).send({
+    status: 'error',
+    message: 'Amount should be a number.'
   });
 
-  // Set transaction fee
-  btcQuery({
-    method: 'settxfee',
-    params: [fee],
-    walletName: req.locals.UserId.toString()
-  })
-    .then(status => {
-      if (!status) throw new Error('Problem with setting up tx fee.');
-      // Fee was set up successfully -> send transaction
-      return btcQuery({
-        method: 'sendtoaddress',
-        params: [address, amount, comment],
-        walletName: req.locals.UserId.toString()
-      });
-    })
-    .then(txid => {
-      res.send({
-        status: 'success',
-        txid
-      });
-    })
-    .catch(err => {
-      if (err.name === 'Breaker') return;
-      if (err instanceof Error) err = err.message;
-      if (getBtcErrorCode(err) === -6)
-        return res.status(400).send({
-          status: 'error', message: 'Insufficient funds.'
+  if (!tools.isAddress(address)) return res.status(422).send({
+    status: 'error',
+    message: 'Invalid address.'
+  });
+
+  db.any('SELECT * FROM "Wallets" WHERE "UserId" = $1', [userId])
+    .then(rows => {
+      if (!rows[0])
+        return res.status(422).send({
+          status: 'error',
+          message: 'No user with such username & password combination.'
         });
+
+      const { Address: from, PrivateKey: privateKey } = rows[0];
+
+      ethereum.send(from, address, amount, privateKey, (err, txid) => {
+        if (err) {
+          logger.error(err);
+          return res.status(500).send({
+            status: 'error',
+            message: 'Transaction builder error.'
+          });
+        }
+
+        res.send({
+          status: 'success',
+          txid
+        });
+      });
+    }, err => {
       logger.error(err);
       res.status(500).send({
         status: 'error',
-        message: 'Internal server error.'
+        message: 'Error with the database.'
       });
     });
 };
