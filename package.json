@@ -1,12 +1,12 @@
 {
   "name": "crytpo-wallet",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Ethereum crypto wallet API",
   "main": "server.js",
   "scripts": {
     "test": "node_modules/mocha/bin/mocha --recursive",
     "start": "./node_modules/nodemon/bin/nodemon.js server.js",
-    "lint": "node_modules/eslint/bin/eslint.js ."
+    "lint": "eslint --fix ."
   },
   "keywords": [
     "ethereum",
@@ -25,7 +25,6 @@
   "dependencies": {
     "babel-eslint": "^10.0.1",
     "bcryptjs": "^2.4.3",
-    "bip39": "^2.5.0",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
