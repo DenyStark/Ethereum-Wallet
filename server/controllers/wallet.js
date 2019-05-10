@@ -149,7 +149,7 @@ const createAddress = (req, res) => {
  * Send ethers from the user wallet to another user.
  */
 const sendTransaction = (req, res) => {
-  const { amount, address } = req.headers;
+  const { amount, address, comment } = req.headers;
   const value = parseFloat(amount) * 10 ** 18;
   const userId = req.locals.userId;
 
@@ -191,20 +191,21 @@ const sendTransaction = (req, res) => {
             message: 'Not enought funds.'
           });
 
-          ethereum.send(from, address, value, privateKey, (err, txid) => {
-            if (err) {
-              logger.error(err);
-              return res.status(500).send({
-                status: 'error',
-                message: 'Transaction builder error.'
-              });
-            }
+          ethereum.send(from, address, value, privateKey, comment,
+            (err, txid) => {
+              if (err) {
+                logger.error(err);
+                return res.status(500).send({
+                  status: 'error',
+                  message: 'Transaction builder error.'
+                });
+              }
 
-            res.send({
-              status: 'success',
-              txid
+              res.send({
+                status: 'success',
+                txid
+              });
             });
-          });
         }, err => {
           if (err instanceof Error) err = err.message;
           logger.error(err);

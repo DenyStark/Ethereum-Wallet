@@ -9,7 +9,7 @@ const eth = web3.eth;
 
 const getBalance = (address) => web3.eth.getBalance(address);
 
-const send = (from, to, value, privateKey, callback) => {
+const send = (from, to, value, privateKey, comment, callback) => {
   const promices = [
     web3.eth.getTransactionCount(from),
     web3.eth.getGasPrice(),
@@ -26,6 +26,11 @@ const send = (from, to, value, privateKey, callback) => {
       to,
       value: utils.toHex(value),
     };
+
+    if (comment) {
+      txData.data = utils.toHex(comment);
+      txData.gasLimit = utils.toHex(21000 + 68 * (comment.length * 2));
+    }
 
     const tx = new Tx(txData);
     const bPrivateKey = Buffer.from(privateKey.slice(2), 'hex');
