@@ -57,7 +57,31 @@ const getTransactions = (req, res) => {
       const { Address: address } = rows[0];
 
       etherscan.getTransactions(address)
-        .then(({ txs }) => {
+        .then(({ txs: payload }) => {
+          const txs = [];
+
+          for (const tx of payload) {
+            const {
+              timeStamp, hash, from, to, value, input, confirmations
+            } = tx;
+
+            const category = (address === from) ? 'send' : 'receive';
+            const txAddress = (address === from) ? to : from;
+
+            const amount = value / 10 ** 18;
+            const comment = tools.hexToString(input);
+
+            txs.push({
+              txid: hash,
+              address: txAddress,
+              category,
+              amount,
+              confirmations,
+              time: timeStamp,
+              comment,
+            });
+          }
+
           res.send({
             status: 'success',
             address,

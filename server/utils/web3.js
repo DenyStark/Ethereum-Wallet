@@ -12,7 +12,10 @@ const generateNewAccount = () => {
 
 const isAddress = (address) => (utils.isAddress(address));
 
+const hexToString = (hex) => (web3.utils.hexToAscii(hex));
+
 module.exports = {
   generateNewAccount,
   isAddress,
+  hexToString,
 };
