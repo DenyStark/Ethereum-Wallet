@@ -22,9 +22,11 @@ const getBalance = (req, res) => {
 
       ethereum.getBalance(address)
         .then(balance => {
+          const etherBalance = balance / 10 ** 18;
+
           res.send({
             status: 'success',
-            balance // In wei
+            balance: etherBalance
           });
         }, err => {
           if (err instanceof Error) err = err.message;
