@@ -67,8 +67,9 @@ const getTransactions = (req, res) => {
               timeStamp, hash, from, to, value, input, confirmations
             } = tx;
 
-            const category = (address === from) ? 'send' : 'receive';
-            const txAddress = (address === from) ? to : from;
+            const lowarCaseAddress = address.toLowerCase();
+            const category = (lowarCaseAddress === from) ? 'send' : 'receive';
+            const txAddress = (lowarCaseAddress === from) ? to : from;
 
             const amount = value / 10 ** 18;
             const comment = tools.hexToString(input);
