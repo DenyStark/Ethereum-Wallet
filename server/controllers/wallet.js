@@ -149,7 +149,7 @@ const createAddress = (req, res) => {
  */
 const sendTransaction = (req, res) => {
   const { amount, address } = req.headers;
-  const value = parseFloat(amount);
+  const value = parseFloat(amount) * 10 ** 18;
   const userId = req.locals.userId;
 
   if (!userId) return res.status(401).send({
@@ -182,20 +182,36 @@ const sendTransaction = (req, res) => {
 
       const { Address: from, PrivateKey: privateKey } = rows[0];
 
-      ethereum.send(from, address, amount, privateKey, (err, txid) => {
-        if (err) {
-          logger.error(err);
-          return res.status(500).send({
+      ethereum.getBalance(from)
+        .then(balance => {
+          // Txs fee = 420000000000000 = 21000 * 2 Gwei
+          if (balance < value + 420000000000000) return res.status(422).send({
             status: 'error',
-            message: 'Transaction builder error.'
+            message: 'Not enought funds.'
           });
-        }
 
-        res.send({
-          status: 'success',
-          txid
+          ethereum.send(from, address, value, privateKey, (err, txid) => {
+            if (err) {
+              logger.error(err);
+              return res.status(500).send({
+                status: 'error',
+                message: 'Transaction builder error.'
+              });
+            }
+
+            res.send({
+              status: 'success',
+              txid
+            });
+          });
+        }, err => {
+          if (err instanceof Error) err = err.message;
+          logger.error(err);
+          res.status(500).send({
+            status: 'error',
+            message: 'Internal server error.'
+          });
         });
-      });
     }, err => {
       logger.error(err);
       res.status(500).send({
