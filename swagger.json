@@ -2,8 +2,8 @@
     "swagger": "2.0",
     "info": {
         "version": "1.0.0",
-        "title": "Bitcoin wallet API",
-        "description": "Just simple Bitcoin-based API for a crypto wallet.",
+        "title": "Ethereum wallet API",
+        "description": "Just simple Ethereum-based API for a crypto wallet.",
         "license": {
             "name": "ISC",
             "url": "https://choosealicense.com/licenses/isc/"
@@ -73,7 +73,7 @@
                 "tags": [
                     "Wallet"
                 ],
-                "summary": "Get your Bitcoin balance",
+                "summary": "Get your Ethereum balance",
                 "responses": {
                     "200": {
                         "description": "Balance was get successfully",
@@ -98,7 +98,7 @@
                 "tags": [
                     "Wallet"
                 ],
-                "summary": "Get your Bitcoin transactions"
+                "summary": "Get your Ethereum transactions"
             }
         },
         "/rates/ethusd": {
@@ -115,7 +115,7 @@
                 "tags": [
                     "Rates"
                 ],
-                "summary": "Get BTC/USD rate",
+                "summary": "Get ETH/USD rate",
                 "responses": {
                     "200": {
                         "description": "Rate was received successfully",
