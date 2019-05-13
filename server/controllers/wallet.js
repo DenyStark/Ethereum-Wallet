@@ -188,7 +188,7 @@ const sendTransaction = (req, res) => {
           // Txs fee = 420000000000000 = 21000 * 2 Gwei
           if (balance < value + 420000000000000) return res.status(422).send({
             status: 'error',
-            message: 'Not enought funds.'
+            message: 'Not enough funds.'
           });
 
           ethereum.send(from, address, value, privateKey, comment,
