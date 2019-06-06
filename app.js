@@ -1,13 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
 
-const swaggerDocument = require('./swagger.json');
 const walletRoutes = require('./server/routes/wallet');
 const authRoutes = require('./server/routes/auth');
 const ratesRoutes = require('./server/routes/rates');
 
 const app = express();
+
+const swaggerDocument = YAML.load('./api/swagger/swagger.yaml');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

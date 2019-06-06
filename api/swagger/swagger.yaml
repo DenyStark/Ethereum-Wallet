@@ -6,15 +6,17 @@ info:
   license:
     name: ISC
     url: https://choosealicense.com/licenses/isc/
-host: 176.37.12.50:8364
+host: localhost:3000
 schemes:
   - http
 basePath: "/"
 tags:
-- name: Users
-  description: API for users in the system
 - name: Auth
   description: API for users login and registration
+- name: Wallet
+  description: API for wallet operations
+- name: Rates
+  description: API for get currency rates
 consumes:
 - application/json
 produces:
@@ -111,6 +113,8 @@ definitions:
   Transactions:
     properties:
       status:
+        type: string
+      address:
         type: string
       txs:
         type: object
